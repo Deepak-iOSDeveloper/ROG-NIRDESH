@@ -1,0 +1,79 @@
+{% extends 'care/base.html' %}
+
+{% block title %}Log New Issue - {{ patient.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Report New Illness / Issue</h2>
+            <p class="text-muted">Log a new disease or symptom trajectory for <strong>{{ patient.name }}</strong></p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Patient Demographics Summary -->
+            <div class="col-md-4">
+                <div class="card p-4">
+                    <h5 class="fw-bold text-teal mb-3">Patient Profile</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><strong class="text-muted">Name:</strong> {{ patient.name }}</li>
+                        <li class="mb-2"><strong class="text-muted">Age:</strong> {{ patient.age }}</li>
+                        <li class="mb-0"><strong class="text-muted">Gender:</strong> {{ patient.gender }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- New Case Form -->
+            <div class="col-md-8">
+                <div class="card p-4">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <h5 class="fw-bold text-teal mb-3">Translation Settings</h5>
+                        <div class="row g-3 mb-4 align-items-end">
+                            <div class="col-md-5">
+                                <label for="{{ form.source_language.id_for_label }}" class="form-label fw-semibold text-muted small text-uppercase">Translate From</label>
+                                {{ form.source_language }}
+                                {% if form.source_language.errors %}
+                                    <div class="text-danger small mt-1">{{ form.source_language.errors.as_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-2 text-center pb-2">
+                                <span class="fs-4 text-muted">➔</span>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="{{ form.destination_language.id_for_label }}" class="form-label fw-semibold text-muted small text-uppercase">Translate To</label>
+                                {{ form.destination_language }}
+                                {% if form.destination_language.errors %}
+                                    <div class="text-danger small mt-1">{{ form.destination_language.errors.as_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <hr class="text-muted opacity-25">
+                        
+                        <h5 class="fw-bold text-teal mb-3">New Symptoms</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.symptom_description.id_for_label }}" class="form-label fw-semibold">Description</label>
+                            {{ form.symptom_description }}
+                            {% if form.symptom_description.errors %}
+                                <div class="text-danger small mt-1">{{ form.symptom_description.errors.as_text }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <span class="me-2">💡</span>
+                            <div>The AI will translate the description to the destination language and extract key symptoms to track this new illness trajectory.</div>
+                        </div>
+                        
+                        <div class="text-end mt-4">
+                            <a href="{% url 'care:dashboard' %}" class="btn btn-outline-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">🔍 Analyze & Log Issue</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

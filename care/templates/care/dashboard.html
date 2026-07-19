@@ -1,0 +1,101 @@
+{% extends 'care/base.html' %}
+
+{% block title %}Doctor Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold">Doctor Dashboard</h2>
+        <p class="text-muted">Overview of active patient cases and recovery trends.</p>
+    </div>
+    <div>
+        <a href="{% url 'care:patient_intake' %}" class="btn btn-primary">+ New Patient</a>
+    </div>
+</div>
+
+<h4 class="mb-3">Active Cases</h4>
+{% if case_data %}
+<div class="row g-4 mb-5">
+    {% for data in case_data %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <h5 class="card-title fw-bold m-0">{{ data.case.patient.name }}</h5>
+                    <span class="text-muted">#{{ data.case.pk }}</span>
+                </div>
+                <p class="small text-muted mb-3">
+                    Age: {{ data.case.patient.age }} • {{ data.case.patient.gender }} • Lang: {{ data.case.patient.source_language }} ➔ {{ data.case.patient.destination_language }}
+                </p>
+                
+                <div class="mb-3 p-2 bg-light rounded" style="font-size: 0.9rem;">
+                    <strong>Latest Status:</strong><br>
+                    {% if data.trend.alert %}
+                        <span class="badge badge-worsening w-100 mt-1 d-block text-start">⚠️ {{ data.trend.classification }}</span>
+                    {% elif data.trend.classification == 'WORSENING' %}
+                        <span class="badge badge-worsening w-100 mt-1 d-block text-start">{{ data.trend.classification }}</span>
+                    {% elif data.trend.classification == 'IMPROVING' %}
+                        <span class="badge badge-improving w-100 mt-1 d-block text-start">{{ data.trend.classification }}</span>
+                    {% else %}
+                        <span class="badge badge-stable w-100 mt-1 d-block text-start">{{ data.trend.classification }}</span>
+                    {% endif %}
+                    
+                    {% if data.trend.slope is not None %}
+                        <div class="mt-2 small text-muted">
+                            Trend Confidence: {% widthratio data.trend.r_squared 1 100 %}%
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <p class="card-text text-truncate small" style="max-height: 40px;">
+                    {{ data.case.illness_description_translated }}
+                </p>
+                
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <a href="{% url 'care:patient_new_case' data.case.patient.pk %}" class="btn btn-sm btn-outline-success" title="Add new illness/issue for this patient">+ Add Issue</a>
+                        <a href="{% url 'care:checkin_form' data.case.pk %}" class="btn btn-sm btn-outline-secondary" title="Add check-in for this case">+ Check-in</a>
+                    </div>
+                    <a href="{% url 'care:case_detail' data.case.pk %}" class="btn btn-sm btn-primary">View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">No active cases currently.</div>
+{% endif %}
+
+<h4 class="mb-3 mt-5">Recently Resolved Cases</h4>
+{% if resolved_cases %}
+<div class="table-responsive bg-white rounded shadow-sm p-3">
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Case #</th>
+                <th>Patient</th>
+                <th>Original Symptoms</th>
+                <th>Date Logged</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for case in resolved_cases %}
+            <tr>
+                <td>{{ case.pk }}</td>
+                <td><strong>{{ case.patient.name }}</strong></td>
+                <td class="text-truncate" style="max-width: 300px;">{{ case.illness_description_translated }}</td>
+                <td>{{ case.created_at|date:"M d, Y" }}</td>
+                <td>
+                    <a href="{% url 'care:case_detail' case.pk %}" class="btn btn-sm btn-light">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="text-muted">No resolved cases.</p>
+{% endif %}
+{% endblock %}

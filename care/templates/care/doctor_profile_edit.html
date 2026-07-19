@@ -1,0 +1,91 @@
+{% extends 'care/base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <h3 style="font-weight: 700; color: #1e293b; margin-bottom: 6px;">Edit Profile</h3>
+                <p class="text-muted mb-0" style="font-size: 0.93rem;">Update your professional details</p>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="id_name" class="form-label">Full Name</label>
+                    {{ form.name }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_profile_image" class="form-label">Profile Image</label>
+                    {{ form.profile_image }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_specialization" class="form-label">Specialization</label>
+                    {{ form.specialization }}
+                </div>
+
+                <div class="mb-3 form-check">
+                    {{ form.is_all_rounder }}
+                    <label for="id_is_all_rounder" class="form-check-label" style="font-weight: 600; color: #334155;">
+                        All-Rounder (General Practitioner)
+                    </label>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="id_experience_years" class="form-label">Experience (Years)</label>
+                            {{ form.experience_years }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="id_solved_patients" class="form-label">Solved Patients</label>
+                            {{ form.solved_patients }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Languages Spoken</label>
+                    <div class="d-flex flex-wrap gap-3 p-3" style="background: #f8fafb; border-radius: 12px; border: 1.5px solid #e2e8f0;">
+                        {% for choice in form.languages_spoken %}
+                            <div class="form-check">
+                                {{ choice.tag }}
+                                <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                    {{ choice.choice_label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_bio" class="form-label">Bio</label>
+                    {{ form.bio }}
+                </div>
+
+                {% if form.errors %}
+                    <div class="alert alert-danger py-2 mb-3" style="font-size: 0.9rem;">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary flex-grow-1">Save Changes</button>
+                    <a href="{% url 'care:doctor_profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

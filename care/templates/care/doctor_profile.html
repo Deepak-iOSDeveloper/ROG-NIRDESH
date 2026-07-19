@@ -1,0 +1,92 @@
+{% extends 'care/base.html' %}
+
+{% block title %}Dr. {{ doctor.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card p-4 p-md-5">
+            <!-- Profile Header -->
+            <div class="text-center mb-4">
+                {% if doctor.profile_image %}
+                    <img src="{{ doctor.profile_image.url }}" alt="Dr. {{ doctor.name }}"
+                         style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #ccfbf1; margin-bottom: 16px;">
+                {% else %}
+                    <div style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #0f766e, #14b8a6); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 2.5rem; font-weight: 700; color: #fff; letter-spacing: 1px;">
+                        {{ doctor.name|make_list|first|upper }}
+                    </div>
+                {% endif %}
+
+                <h2 style="font-weight: 700; color: #1e293b; margin-bottom: 8px;">Dr. {{ doctor.name }}</h2>
+
+                <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
+                    <span class="badge-teal">
+                        🪪 {{ doctor.license_number }}
+                    </span>
+                    {% if doctor.is_all_rounder %}
+                        <span class="badge-teal-solid">⭐ All-Rounder</span>
+                    {% elif doctor.specialization %}
+                        <span class="badge-teal-solid">{{ doctor.specialization }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-4">
+                    <div class="text-center p-3" style="background: #f8fafb; border-radius: 12px;">
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #0d9488;">{{ doctor.experience_years|default:"—" }}</div>
+                        <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Years Exp.</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center p-3" style="background: #f8fafb; border-radius: 12px;">
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #0d9488;">{{ doctor.solved_patients|default:"0" }}</div>
+                        <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Solved Cases</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center p-3" style="background: #f8fafb; border-radius: 12px;">
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #0d9488;">{{ doctor.languages_spoken|length|default:"0" }}</div>
+                        <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Languages</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Languages -->
+            {% if doctor.languages_spoken %}
+                <div class="mb-4">
+                    <h6 style="font-weight: 700; color: #334155; margin-bottom: 10px;">Languages Spoken</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for lang in doctor.languages_spoken %}
+                            <span class="badge-teal">{{ lang }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Bio -->
+            {% if doctor.bio %}
+                <div class="mb-4">
+                    <h6 style="font-weight: 700; color: #334155; margin-bottom: 10px;">About</h6>
+                    <p class="text-muted mb-0" style="line-height: 1.7; font-size: 0.95rem;">{{ doctor.bio }}</p>
+                </div>
+            {% endif %}
+
+            <!-- Member Since -->
+            <div class="mb-4">
+                <p class="text-muted mb-0" style="font-size: 0.85rem;">
+                    <strong>Member since:</strong> {{ doctor.created_at|date:"F j, Y" }}
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="text-center">
+                <a href="{% url 'care:doctor_profile_edit' %}" class="btn btn-primary">
+                    ✏️ Edit Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

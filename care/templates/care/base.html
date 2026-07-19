@@ -1,0 +1,318 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ROGNIRDESH{% endblock %} — ROGNIRDESH</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --bg-body: #f8fafb;
+            --card-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --card-radius: 12px;
+            --btn-radius: 8px;
+            --hero-radius: 16px;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            background: linear-gradient(135deg, #0f766e, #0d9488, #14b8a6) !important;
+            padding: 12px 0;
+            box-shadow: 0 2px 16px rgba(13,148,136,0.18);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.35rem;
+            letter-spacing: -0.5px;
+            color: #fff !important;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.88) !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 8px 16px !important;
+            border-radius: var(--btn-radius);
+            transition: background 0.2s, color 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.15);
+            color: #fff !important;
+        }
+
+        /* ── Cards ── */
+        .card {
+            border: none;
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+        }
+
+        /* ── Buttons ── */
+        .btn-primary {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            border-radius: var(--btn-radius);
+            font-weight: 600;
+            padding: 10px 24px;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+            transform: translateY(-1px);
+        }
+        .btn-outline-primary {
+            color: var(--primary) !important;
+            border-color: var(--primary) !important;
+            border-radius: var(--btn-radius);
+            font-weight: 600;
+            padding: 10px 24px;
+        }
+        .btn-outline-primary:hover {
+            background: var(--primary) !important;
+            color: #fff !important;
+        }
+        .btn-outline-secondary {
+            border-radius: var(--btn-radius);
+            font-weight: 600;
+            padding: 10px 24px;
+        }
+
+        /* ── Hero Section ── */
+        .hero-section {
+            background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+            border-radius: var(--hero-radius);
+            padding: 48px;
+        }
+
+        /* ── Badges ── */
+        .badge-teal {
+            background: rgba(13,148,136,0.12);
+            color: var(--primary-dark);
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        .badge-teal-solid {
+            background: var(--primary);
+            color: #fff;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* ── Stat Cards ── */
+        .stat-card {
+            text-align: center;
+            padding: 24px 16px;
+        }
+        .stat-card .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        /* ── Tables ── */
+        .table thead th {
+            background: #f1f5f9;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #475569;
+            border: none;
+        }
+        .table td {
+            vertical-align: middle;
+            color: #334155;
+        }
+
+        /* ── Status Badges ── */
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .status-resolved {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .status-worsening {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        /* ── Form Styles ── */
+        .form-control, .form-select {
+            border-radius: var(--btn-radius);
+            border: 1.5px solid #e2e8f0;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 24px 0;
+            margin-top: auto;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* ── Alert Messages ── */
+        .alert {
+            border-radius: var(--btn-radius);
+            border: none;
+            font-weight: 500;
+        }
+
+        /* ── Misc ── */
+        .text-teal {
+            color: var(--primary) !important;
+        }
+        .bg-teal-light {
+            background: rgba(13,148,136,0.08);
+        }
+        a {
+            color: var(--primary);
+        }
+        a:hover {
+            color: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'care:home' %}">🏥 ROGNIRDESH</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'care:about' %}">About</a>
+                    </li>
+                    {% if request.session.doctor_id %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'care:dashboard' %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'care:patient_clusters' %}">Clusters</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'care:patient_intake' %}">New Patient</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'care:doctor_profile' %}">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'care:doctor_logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'care:doctor_signup' %}">Signup</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'care:doctor_login' %}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="container my-4 flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-0"><strong>ROGNIRDESH</strong> — AI-Powered Illness Guidance &amp; Patient Clustering | Built with Django &amp; Groq</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5.3.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

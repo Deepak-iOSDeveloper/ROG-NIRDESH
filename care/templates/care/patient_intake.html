@@ -1,0 +1,99 @@
+{% extends 'care/base.html' %}
+
+{% block title %}New Patient Intake{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">New Patient Intake</h2>
+            <p class="text-muted">Enter patient details and describe symptoms to translate</p>
+        </div>
+        
+        <div class="card p-4">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <h5 class="fw-bold text-teal mb-3">Patient Details</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">Full Name</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="text-danger small mt-1">{{ form.name.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="{{ form.age.id_for_label }}" class="form-label fw-semibold">Age</label>
+                        {{ form.age }}
+                        {% if form.age.errors %}
+                            <div class="text-danger small mt-1">{{ form.age.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="{{ form.gender.id_for_label }}" class="form-label fw-semibold">Gender</label>
+                        {{ form.gender }}
+                        {% if form.gender.errors %}
+                            <div class="text-danger small mt-1">{{ form.gender.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="{{ form.phone_number.id_for_label }}" class="form-label fw-semibold">Phone Number</label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <div class="text-danger small mt-1">{{ form.phone_number.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+
+                <hr class="text-muted opacity-25">
+                
+                <h5 class="fw-bold text-teal mb-3">Translation Settings</h5>
+                <div class="row g-3 mb-4 align-items-end">
+                    <div class="col-md-5">
+                        <label for="{{ form.source_language.id_for_label }}" class="form-label fw-semibold text-muted small text-uppercase">Translate From</label>
+                        {{ form.source_language }}
+                        {% if form.source_language.errors %}
+                            <div class="text-danger small mt-1">{{ form.source_language.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-2 text-center pb-2">
+                        <span class="fs-4 text-muted">➔</span>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="{{ form.destination_language.id_for_label }}" class="form-label fw-semibold text-muted small text-uppercase">Translate To</label>
+                        {{ form.destination_language }}
+                        {% if form.destination_language.errors %}
+                            <div class="text-danger small mt-1">{{ form.destination_language.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <hr class="text-muted opacity-25">
+                
+                <h5 class="fw-bold text-teal mb-3">Symptoms</h5>
+                <div class="mb-3">
+                    <label for="{{ form.symptom_description.id_for_label }}" class="form-label fw-semibold">Description</label>
+                    {{ form.symptom_description }}
+                    {% if form.symptom_description.errors %}
+                        <div class="text-danger small mt-1">{{ form.symptom_description.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="alert alert-info d-flex align-items-center" role="alert">
+                    <span class="me-2">💡</span>
+                    <div>The AI will translate the description to the destination language and extract key symptoms.</div>
+                </div>
+                
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">🔍 Analyze Symptoms</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

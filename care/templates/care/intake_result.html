@@ -1,0 +1,204 @@
+{% extends 'care/base.html' %}
+
+{% block title %}Intake Result{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-success">✅ Patient Intake Complete</h2>
+            <p class="text-muted">AI has successfully processed the patient's symptoms.</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Patient Info -->
+            <div class="col-md-4">
+                <div class="card h-100 p-4">
+                    <h5 class="fw-bold text-teal mb-3">Patient Summary</h5>
+                    <ul class="list-unstyled mb-3">
+                        <li class="mb-2"><strong class="text-muted">Name:</strong> {{ patient.name }}</li>
+                        <li class="mb-2"><strong class="text-muted">Age:</strong> {{ patient.age }}</li>
+                        <li class="mb-0"><strong class="text-muted">Gender:</strong> {{ patient.gender }}</li>
+                    </ul>
+                    <hr class="my-3 opacity-25">
+                    <h6 class="fw-bold text-teal mb-2 small text-uppercase">Change Translation</h6>
+                    <form method="POST" action="{% url 'care:retranslate_case' case.pk %}">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <label class="form-label text-muted small mb-1">Translate From</label>
+                            <select name="source_language" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="Hindi" {% if patient.source_language == 'Hindi' %}selected{% endif %}>Hindi</option>
+                                <option value="English" {% if patient.source_language == 'English' %}selected{% endif %}>English</option>
+                                <option value="Bengali" {% if patient.source_language == 'Bengali' %}selected{% endif %}>Bengali</option>
+                                <option value="Tamil" {% if patient.source_language == 'Tamil' %}selected{% endif %}>Tamil</option>
+                                <option value="Telugu" {% if patient.source_language == 'Telugu' %}selected{% endif %}>Telugu</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small mb-1">Translate To</label>
+                            <select name="destination_language" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="Hindi" {% if patient.destination_language == 'Hindi' %}selected{% endif %}>Hindi</option>
+                                <option value="English" {% if patient.destination_language == 'English' %}selected{% endif %}>English</option>
+                                <option value="Bengali" {% if patient.destination_language == 'Bengali' %}selected{% endif %}>Bengali</option>
+                                <option value="Tamil" {% if patient.destination_language == 'Tamil' %}selected{% endif %}>Tamil</option>
+                                <option value="Telugu" {% if patient.destination_language == 'Telugu' %}selected{% endif %}>Telugu</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-outline-primary w-100">
+                            🔄 Re-Translate
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- AI Translation -->
+            <div class="col-md-8">
+                <div class="card h-100 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-teal mb-0">AI-Translated Clinical Summary</h5>
+                        <button id="speaker-btn" class="btn btn-sm btn-outline-secondary rounded-circle px-2" title="Read Aloud" aria-label="Read Aloud">
+                            🔊
+                        </button>
+                    </div>
+                    <div class="bg-light p-3 rounded mb-3">
+                        <p id="translated-text" class="mb-0 fs-5">{{ translated_text }}</p>
+                    </div>
+                    
+                    <h6 class="fw-bold text-muted mb-2 small text-uppercase">Original Input ({{ patient.source_language }})</h6>
+                    <blockquote class="blockquote small text-muted border-start border-3 ps-3">
+                        {{ case.illness_description_original }}
+                    </blockquote>
+                </div>
+            </div>
+            
+            <!-- Detected Symptoms -->
+            <div class="col-md-8">
+                <div class="card h-100 p-4">
+                    <h5 class="fw-bold text-teal mb-3">Detected Symptoms (Day 0)</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for symptom in all_symptoms %}
+                            {% for key, val in detected_symptoms.items %}
+                                {% if key == symptom.symptom_name %}
+                                    {% if val %}
+                                        <span class="badge bg-success py-2 px-3 fs-6 rounded-pill">
+                                            ✅ {{ symptom.display_name }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-light text-secondary border py-2 px-3 fs-6 rounded-pill">
+                                            {{ symptom.display_name }}
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Initial Score -->
+            <div class="col-md-4">
+                <div class="card h-100 p-4 stat-card d-flex flex-column justify-content-center">
+                    <div class="stat-number">{{ checkin.computed_score }}</div>
+                    <div class="stat-label">Initial Health Score</div>
+                    <div class="small text-muted mt-2">Based on weighted symptom severity</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{% url 'care:dashboard' %}" class="btn btn-outline-primary btn-lg me-3">
+                📋 Go to Doctor Dashboard
+            </a>
+            <a href="{% url 'care:checkin_form' case.pk %}" class="btn btn-primary btn-lg">
+                🔄 New Check-in for this Case
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const speakerBtn = document.getElementById('speaker-btn');
+        const textToRead = document.getElementById('translated-text').innerText;
+        const destLang = "{{ patient.destination_language }}";
+        
+        // Map language names to language codes for the speech synthesis
+        const langMap = {
+            'Hindi': 'hi-IN',
+            'English': 'en-US',
+            'Bengali': 'bn-IN',
+            'Tamil': 'ta-IN',
+            'Telugu': 'te-IN'
+        };
+        
+        let isSpeaking = false;
+        let currentUtterance = null; // Store globally to prevent garbage collection
+        
+        speakerBtn.addEventListener('click', function() {
+            if ('speechSynthesis' in window) {
+                if (isSpeaking) {
+                    window.speechSynthesis.cancel();
+                    isSpeaking = false;
+                    speakerBtn.innerHTML = '🔊';
+                    speakerBtn.classList.remove('btn-primary');
+                    speakerBtn.classList.add('btn-outline-secondary');
+                    return;
+                }
+                
+                currentUtterance = new SpeechSynthesisUtterance(textToRead);
+                const langCode = langMap[destLang] || 'en-US';
+                currentUtterance.lang = langCode;
+                
+                const voices = window.speechSynthesis.getVoices();
+                let matchedVoice = voices.find(v => v.lang === langCode);
+                
+                if (!matchedVoice) {
+                    matchedVoice = voices.find(v => v.lang.startsWith(langCode.split('-')[0]));
+                }
+                
+                // Fallback to Hindi voice for Indic scripts if the specific language voice is missing
+                // (Hindi voice is usually available and can read Devanagari script)
+                if (!matchedVoice && ['Bengali', 'Tamil', 'Telugu', 'Hindi'].includes(destLang)) {
+                    matchedVoice = voices.find(v => v.lang.startsWith('hi'));
+                }
+                
+                if (matchedVoice) {
+                    currentUtterance.voice = matchedVoice;
+                }
+                
+                currentUtterance.onend = function() {
+                    isSpeaking = false;
+                    speakerBtn.innerHTML = '🔊';
+                    speakerBtn.classList.remove('btn-primary');
+                    speakerBtn.classList.add('btn-outline-secondary');
+                };
+                
+                currentUtterance.onerror = function(e) {
+                    console.error("Speech synthesis error", e);
+                    isSpeaking = false;
+                    speakerBtn.innerHTML = '🔊';
+                    speakerBtn.classList.remove('btn-primary');
+                    speakerBtn.classList.add('btn-outline-secondary');
+                };
+                
+                window.speechSynthesis.speak(currentUtterance);
+                isSpeaking = true;
+                speakerBtn.innerHTML = '⏹️';
+                speakerBtn.classList.remove('btn-outline-secondary');
+                speakerBtn.classList.add('btn-primary');
+            } else {
+                alert("Sorry, your browser doesn't support text to speech.");
+            }
+        });
+        
+        // Ensure voices are loaded (Chrome specific quirk)
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = function() {
+                window.speechSynthesis.getVoices();
+            };
+        }
+    });
+</script>
+{% endblock %}

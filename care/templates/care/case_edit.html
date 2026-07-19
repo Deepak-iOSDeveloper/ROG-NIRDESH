@@ -1,0 +1,45 @@
+{% extends 'care/base.html' %}
+
+{% block title %}Edit Case #{{ case.pk }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card p-4 p-md-5">
+            <div class="mb-4">
+                <h3 style="font-weight: 700; color: #1e293b; margin-bottom: 6px;">Edit Case #{{ case.pk }}</h3>
+                <p class="text-muted mb-0" style="font-size: 0.93rem;">Patient: <strong>{{ case.patient.name }}</strong></p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="id_illness_description_original" class="form-label">Illness Description (Original Language)</label>
+                    {{ form.illness_description_original }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_status" class="form-label">Case Status</label>
+                    {{ form.status }}
+                </div>
+
+                {% if form.errors %}
+                    <div class="alert alert-danger py-2 mb-3" style="font-size: 0.9rem;">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary flex-grow-1">Save Changes</button>
+                    <a href="{% url 'care:case_detail' case.pk %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

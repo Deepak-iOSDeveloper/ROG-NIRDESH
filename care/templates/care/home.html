@@ -1,0 +1,111 @@
+{% extends 'care/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center mb-5">
+    <h1 style="font-weight: 800; font-size: 2.5rem; color: #0f766e; margin-bottom: 12px;">
+        Welcome to <span style="background: linear-gradient(135deg, #0f766e, #14b8a6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ROGNIRDESH</span>
+    </h1>
+    <p style="font-size: 1.15rem; color: #0d9488; font-weight: 600; margin-bottom: 8px;">
+        Rog = Illness, Nirdesh = Guidance — Your AI-powered medical guidance platform
+    </p>
+    <p style="max-width: 640px; margin: 0 auto; color: #475569; font-size: 1rem; line-height: 1.7;">
+        ROGNIRDESH leverages advanced AI to translate multilingual patient symptoms into clinical English,
+        perform recovery trend analysis using custom ML models, and intelligently cluster patients
+        by symptom similarity — empowering doctors with data-driven insights.
+    </p>
+    <div class="mt-4">
+        {% if request.session.doctor_id %}
+            <a href="{% url 'care:patient_intake' %}" class="btn btn-primary me-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                New Patient
+            </a>
+            <a href="{% url 'care:dashboard' %}" class="btn btn-outline-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                Dashboard
+            </a>
+        {% else %}
+            <a href="{% url 'care:doctor_signup' %}" class="btn btn-primary me-2">
+                Get Started — Sign Up
+            </a>
+            <a href="{% url 'care:doctor_login' %}" class="btn btn-outline-primary">
+                Login
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="row g-4 mb-5">
+    <div class="col-6 col-md-3">
+        <div class="card stat-card">
+            <div class="stat-number">{{ active_cases|default:"0" }}</div>
+            <div class="stat-label">Active Cases</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_patients|default:"0" }}</div>
+            <div class="stat-label">Total Patients</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_checkins|default:"0" }}</div>
+            <div class="stat-label">Total Check-ins</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_doctors|default:"0" }}</div>
+            <div class="stat-label">Registered Doctors</div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works -->
+<div class="mb-5">
+    <h2 class="text-center mb-2" style="font-weight: 700; color: #0f766e;">How It Works</h2>
+    <p class="text-center text-muted mb-4" style="max-width: 520px; margin: 0 auto;">Four simple steps to smarter patient care</p>
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center p-4">
+                <div style="font-size: 2.5rem; margin-bottom: 12px;">📋</div>
+                <h5 style="font-weight: 700; color: #1e293b;">Patient Intake</h5>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                    Register patients with demographics and initial symptoms in any of 7 Indian languages.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center p-4">
+                <div style="font-size: 2.5rem; margin-bottom: 12px;">🩺</div>
+                <h5 style="font-weight: 700; color: #1e293b;">Periodic Check-ins</h5>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                    Track patient progress with regular follow-up check-ins and health scoring.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center p-4">
+                <div style="font-size: 2.5rem; margin-bottom: 12px;">📈</div>
+                <h5 style="font-weight: 700; color: #1e293b;">Trend Analysis</h5>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                    AI-powered linear regression model detects recovery or worsening trends in patient data.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center p-4">
+                <div style="font-size: 2.5rem; margin-bottom: 12px;">🧬</div>
+                <h5 style="font-weight: 700; color: #1e293b;">Smart Clustering</h5>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                    K-Means algorithm groups patients by symptom similarity for efficient population analysis.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

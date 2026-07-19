@@ -1,0 +1,266 @@
+{% extends 'care/base.html' %}
+
+{% block title %}Case #{{ case.pk }}{% endblock %}
+
+{% block content %}
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <a href="{% url 'care:dashboard' %}" class="text-decoration-none">← Back to Dashboard</a>
+    
+    <div>
+        <a href="{% url 'care:checkin_form' case.pk %}" class="btn btn-primary me-2">🔄 New Check-in</a>
+        {% if case.status == 'active' %}
+            <form action="{% url 'care:resolve_case' case.pk %}" method="POST" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-success" onclick="return confirm('Are you sure you want to mark this case as resolved?')">✔️ Mark as Resolved</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+{% if trend.alert %}
+    <div class="alert alert-worsening mb-4 d-flex align-items-center shadow-sm">
+        <span class="fs-3 me-3">⚠️</span>
+        <div>
+            <h5 class="fw-bold mb-1">Recovery trend worsening — recommend early follow-up</h5>
+            <div class="small">The ML model has detected a confident upward trend in symptom severity.</div>
+        </div>
+    </div>
+{% endif %}
+
+<div class="d-flex align-items-center mb-4">
+    <h2 class="fw-bold me-3 mb-0">Case #{{ case.pk }}</h2>
+    <h4 class="text-muted mb-0 fw-light">{{ case.patient.name }}</h4>
+</div>
+
+<!-- Info Cards Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <div class="text-muted small text-uppercase fw-bold mb-2">Patient Details</div>
+            <div><strong>{{ case.patient.name }}</strong>, {{ case.patient.age }} y/o {{ case.patient.gender }}</div>
+            <div class="text-muted small">Language: {{ case.patient.source_language }} ➔ {{ case.patient.destination_language }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <div class="text-muted small text-uppercase fw-bold mb-2">Case Status</div>
+            <div>
+                {% if case.status == 'active' %}
+                    <span class="badge bg-primary px-3 py-2 rounded-pill">ACTIVE</span>
+                {% else %}
+                    <span class="badge bg-success px-3 py-2 rounded-pill">RESOLVED</span>
+                {% endif %}
+            </div>
+            <div class="text-muted small mt-2">Opened: {{ case.created_at|date:"M d, Y" }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <div class="text-muted small text-uppercase fw-bold mb-2">Current Trend</div>
+            <div>
+                {% if trend.classification == 'WORSENING' %}
+                    <span class="badge badge-worsening">{{ trend.classification }}</span>
+                {% elif trend.classification == 'IMPROVING' %}
+                    <span class="badge badge-improving">{{ trend.classification }}</span>
+                {% elif trend.classification == 'STABLE' %}
+                    <span class="badge badge-stable">{{ trend.classification }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ trend.classification }}</span>
+                {% endif %}
+            </div>
+            <div class="text-muted small mt-2">
+                {% if trend.r_squared is not None %}
+                    Confidence: {% widthratio trend.r_squared 1 100 %}%
+                {% else %}
+                    Not enough data
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Chart Column -->
+    <div class="col-lg-8">
+        <div class="card p-4 h-100">
+            <h5 class="fw-bold text-teal mb-4">Recovery Trend Chart</h5>
+            <div style="height: 350px;">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analysis Column -->
+    <div class="col-lg-4">
+        <div class="card p-4 h-100">
+            <h5 class="fw-bold text-teal mb-4">ML Trend Analysis</h5>
+            
+            <div class="mb-4">
+                <div class="text-muted small text-uppercase fw-bold mb-1">Status Message</div>
+                <div class="fs-5">{{ trend.message }}</div>
+            </div>
+            
+            <div class="bg-light p-3 rounded">
+                <div class="text-muted small text-uppercase fw-bold mb-2 border-bottom pb-2">Linear Regression Details</div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Slope:</span>
+                    <span class="fw-semibold">{% if trend.slope is not None %}{{ trend.slope }}{% else %}N/A{% endif %}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Intercept:</span>
+                    <span class="fw-semibold">{% if trend.intercept is not None %}{{ trend.intercept }}{% else %}N/A{% endif %}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">R² (Fit):</span>
+                    <span class="fw-semibold">{% if trend.r_squared is not None %}{{ trend.r_squared }}{% else %}N/A{% endif %}</span>
+                </div>
+            </div>
+            
+            <div class="mt-4 small text-muted">
+                * Note: A positive slope indicates increasing symptom severity (worsening). A negative slope indicates improvement.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Original vs Translated -->
+<div class="card p-4 mb-5">
+    <h5 class="fw-bold text-teal mb-3">Initial Symptom Description (Day 0)</h5>
+    <div class="row g-4">
+        <div class="col-md-6 border-end">
+            <div class="text-muted small text-uppercase fw-bold mb-2">Original ({{ case.patient.source_language }})</div>
+            <div class="fst-italic text-secondary p-3 bg-light rounded">{{ case.illness_description_original }}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="text-muted small text-uppercase fw-bold mb-2">AI Translated ({{ case.patient.destination_language }})</div>
+            <div class="fw-medium p-3 bg-light rounded border-start border-3 border-teal">{{ case.illness_description_translated }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Check-in History Table -->
+<div class="card p-4 mb-5">
+    <h5 class="fw-bold text-teal mb-3">Check-in History</h5>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center border">
+            <thead>
+                <tr>
+                    <th class="text-start">Day</th>
+                    <th class="bg-light text-primary">Score</th>
+                    {% for s in symptoms %}
+                        <th class="small fw-normal" title="{{ s.display_name }}">
+                            {{ s.symptom_name|truncatechars:6 }}
+                        </th>
+                    {% endfor %}
+                    <th class="text-end" style="min-width: 60px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for checkin in checkins %}
+                <tr>
+                    <td class="text-start fw-bold">Day {{ checkin.day_number }}</td>
+                    <td class="bg-light fw-bold text-primary">{{ checkin.computed_score }}</td>
+                    {% for s in symptoms %}
+                        <td>
+                            {% for key, val in checkin.answers.items %}
+                                {% if key == s.symptom_name %}
+                                    {% if val %}✅{% else %}<span class="text-muted opacity-25">-</span>{% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    {% endfor %}
+                    <td class="text-end">
+                        {% if case.status == 'active' %}
+                        <form action="{% url 'care:delete_checkin' checkin.pk %}" method="POST" class="d-inline" onsubmit="return confirm('Delete check-in for Day {{ checkin.day_number }}?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" title="Delete">🗑️</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="13" class="text-muted p-4">No check-ins found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const rawData = {{ chart_data|safe }};
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        
+        const datasets = [
+            {
+                label: 'Symptom Score',
+                data: rawData.scores,
+                borderColor: '#0d9488',
+                backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                borderWidth: 3,
+                pointBackgroundColor: '#0d9488',
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                fill: true,
+                tension: 0.3
+            }
+        ];
+        
+        if (rawData.regression_line) {
+            datasets.push({
+                label: 'Trend Line (Linear Regression)',
+                data: rawData.regression_line,
+                borderColor: '#ef4444',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false,
+                tension: 0
+            });
+        }
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: rawData.labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Day Number',
+                            font: { weight: 'bold' }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Computed Score',
+                            font: { weight: 'bold' }
+                        },
+                        suggestedMax: 20
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

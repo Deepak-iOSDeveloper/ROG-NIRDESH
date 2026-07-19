@@ -1,0 +1,130 @@
+{% extends 'care/base.html' %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center mb-5">
+    <h1 style="font-weight: 800; font-size: 2.3rem; color: #0f766e; margin-bottom: 12px;">About ROGNIRDESH</h1>
+    <p style="font-size: 1.1rem; color: #0d9488; font-weight: 600; margin-bottom: 8px;">
+        <em>Rog</em> = Illness &nbsp;·&nbsp; <em>Nirdesh</em> = Guidance
+    </p>
+    <p style="max-width: 600px; margin: 0 auto; color: #475569; line-height: 1.7;">
+        ROGNIRDESH is an AI-powered clinical decision support platform designed for Indian healthcare providers.
+        It bridges language barriers, surfaces recovery insights, and groups patients intelligently —
+        so doctors can focus on what matters most: patient care.
+    </p>
+</div>
+
+<!-- What We Offer -->
+<div class="mb-5">
+    <h2 class="text-center mb-2" style="font-weight: 700; color: #0f766e;">What We Offer</h2>
+    <p class="text-center text-muted mb-4" style="max-width: 480px; margin: 0 auto;">Four pillars powering smarter healthcare</p>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card h-100 p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                        🌐
+                    </div>
+                    <h5 class="ms-3 mb-0" style="font-weight: 700; color: #1e293b;">Multilingual Symptom Translation</h5>
+                </div>
+                <p class="text-muted mb-0" style="font-size: 0.93rem; line-height: 1.7;">
+                    AI translates patient symptoms across <strong>5 Indian languages</strong> — Hindi, Bengali, Tamil, Telugu, and Kannada — into clear, structured clinical English for accurate diagnosis.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                        📈
+                    </div>
+                    <h5 class="ms-3 mb-0" style="font-weight: 700; color: #1e293b;">Recovery Trend Analysis</h5>
+                </div>
+                <p class="text-muted mb-0" style="font-size: 0.93rem; line-height: 1.7;">
+                    A custom <strong>linear regression ML model</strong> tracks patient health scores over time, detecting improvement or worsening trends and providing doctors with actionable recovery forecasts.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                        🧬
+                    </div>
+                    <h5 class="ms-3 mb-0" style="font-weight: 700; color: #1e293b;">Smart Patient Clustering</h5>
+                </div>
+                <p class="text-muted mb-0" style="font-size: 0.93rem; line-height: 1.7;">
+                    An unsupervised <strong>K-Means algorithm</strong> groups patients by symptom similarity, enabling doctors to identify common patterns, manage outbreaks, and streamline population-level analysis.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                        👨‍⚕️
+                    </div>
+                    <h5 class="ms-3 mb-0" style="font-weight: 700; color: #1e293b;">Doctor-Centric Workflow</h5>
+                </div>
+                <p class="text-muted mb-0" style="font-size: 0.93rem; line-height: 1.7;">
+                    Complete patient management — <strong>profiles, case tracking, periodic check-ins, and full data editing</strong>. Every tool a doctor needs, all in one streamlined interface.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works -->
+<div class="mb-5">
+    <h2 class="text-center mb-2" style="font-weight: 700; color: #0f766e;">How It Works</h2>
+    <p class="text-center text-muted mb-4">A streamlined workflow from intake to insight</p>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="badge-teal-solid me-3" style="min-width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 700;">1</div>
+                    <div>
+                        <h6 style="font-weight: 700; color: #1e293b; margin-bottom: 4px;">Doctor Registers</h6>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">Sign up with your phone number and medical license to access the platform.</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start mb-4">
+                    <div class="badge-teal-solid me-3" style="min-width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 700;">2</div>
+                    <div>
+                        <h6 style="font-weight: 700; color: #1e293b; margin-bottom: 4px;">Patient Intake</h6>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">Enter patient details and describe symptoms in any supported Indian language.</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start mb-4">
+                    <div class="badge-teal-solid me-3" style="min-width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 700;">3</div>
+                    <div>
+                        <h6 style="font-weight: 700; color: #1e293b; margin-bottom: 4px;">AI Translation &amp; Check-ins</h6>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">Symptoms are auto-translated to clinical English. Add periodic check-ins to track progress.</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start">
+                    <div class="badge-teal-solid me-3" style="min-width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 700;">4</div>
+                    <div>
+                        <h6 style="font-weight: 700; color: #1e293b; margin-bottom: 4px;">Insights &amp; Clustering</h6>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">View recovery trend charts and smart patient clusters to guide treatment decisions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mission -->
+<div class="hero-section text-center mb-4">
+    <h2 style="font-weight: 700; color: #0f766e; margin-bottom: 12px;">Our Mission</h2>
+    <p style="max-width: 600px; margin: 0 auto; color: #475569; font-size: 1rem; line-height: 1.7;">
+        To democratize clinical intelligence for healthcare providers across India, breaking language barriers
+        and surfacing actionable insights through machine learning — so every patient gets the best possible care,
+        regardless of which language they speak.
+    </p>
+</div>
+{% endblock %}
