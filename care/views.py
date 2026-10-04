@@ -276,7 +276,7 @@ CRITICAL: Output raw UTF-8 characters for the translation (e.g., "আমার" 
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
-        model="llama-3.3-70b-versatile",
+        model="openai/gpt-oss-120b",
         temperature=0.1,
         max_tokens=4096,
         response_format={"type": "json_object"},
