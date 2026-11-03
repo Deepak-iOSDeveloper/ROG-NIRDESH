@@ -1,4 +1,4 @@
-# SetuCare — AI-Powered Patient Communication Bridge
+# ROG-NIRDESH — AI-Powered Patient Communication Bridge
 
 SetuCare (setu = bridge in Hindi/Sanskrit) is an AI-powered communication bridge between patients and doctors in India. It addresses two primary problems:
 1. Patients struggling to articulate symptoms clearly.
